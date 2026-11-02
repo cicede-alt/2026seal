@@ -9,11 +9,14 @@ const menu = [
   { id: 'script', label: '대본' },
 ]
 
-function Section({ id, no, en, ko, children }) {
+function Section({ id, no, en, ko, note, children }) {
   return (
     <section id={id} className="section">
       <p className="eyebrow">{no} {en}</p>
-      <h2>{ko}</h2>
+      <div className="sec-head">
+        <h2>{ko}</h2>
+        {note && <p className="sec-note">{note}</p>}
+      </div>
       {children}
     </section>
   )
@@ -100,7 +103,7 @@ export default function App() {
       </div>
 
       <main>
-        <Section id="schedule" no="01" en="SCHEDULE" ko="연습 및 공연 일정"><Schedule /></Section>
+        <Section id="schedule" no="01" en="SCHEDULE" ko="연습 및 공연 일정" note="연습 일정은 상황에 따라 변경·추가될 수 있습니다. 변경되면 바로 알려드릴게요."><Schedule /></Section>
         <Section id="script" no="02" en="SCRIPT" ko="대본 (1~4막)"><Script /></Section>
       </main>
 
