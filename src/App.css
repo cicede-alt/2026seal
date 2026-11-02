@@ -67,3 +67,7 @@ footer { margin-top: 0; padding: 28px; text-align: center; color: #999; font-siz
   .top nav a { font-size: .95rem; }
   .band { padding: 56px 0; }
 }
+
+.card.next { border: 2px solid var(--brand); box-shadow: 0 4px 16px rgba(138,90,43,.15); }
+.badge { display: inline-block; font-style: normal; font-size: .72rem; font-weight: 700; padding: 2px 8px; margin-bottom: 6px; border-radius: 999px; background: #eee; color: #777; }
+.card.next .badge { background: var(--brand); color: #fff; }

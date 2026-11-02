@@ -26,19 +26,38 @@ function Section({ id, no, en, ko, note, tone, children }) {
   )
 }
 
+const toDate = (s) => {
+  const [y, m, d] = s.split('-').map(Number)
+  return new Date(y, m - 1, d)
+}
+
+// 미리보기용: 주소 끝에 ?today=2026-11-10 을 붙이면 그 날짜 기준으로 표시됩니다.
+const getToday = () => {
+  const p = new URLSearchParams(window.location.search).get('today')
+  const t = p ? toDate(p) : new Date()
+  return new Date(t.getFullYear(), t.getMonth(), t.getDate())
+}
+
 function Schedule() {
+  const today = getToday()
+  const nextIdx = schedule.findIndex((s) => toDate(s.date) >= today)
   return (
     <ul className="cards">
-      {schedule.map((s) => {
-        const d = new Date(s.date)
+      {schedule.map((s, i) => {
+        const d = toDate(s.date)
+        const diff = Math.round((d - today) / 86400000)
+        const state = diff < 0 ? 'past' : i === nextIdx ? 'next' : 'upcoming'
+        const badge =
+          diff < 0 ? '지난 일정' : diff === 0 ? '오늘' : i === nextIdx ? `다가오는 일정 · D-${diff}` : ''
         return (
-          <li key={s.date + s.title} className="card">
+          <li key={s.date + s.title} className={`card ${state}`}>
             <div className="day">
               <span>{d.getMonth() + 1}월</span>
               <strong>{d.getDate()}</strong>
               <span>{'일월화수목금토'[d.getDay()]}요일</span>
             </div>
             <div>
+              {badge && <em className="badge">{badge}</em>}
               <h3>{s.title}</h3>
               <p>{s.time} · {s.place}</p>
             </div>
