@@ -59,3 +59,11 @@ footer { margin-top: 0; padding: 28px; text-align: center; color: #999; font-siz
 .cast-act li:first-child { border-top: 0; }
 .role small { display: block; color: #aaa; font-size: .75rem; }
 
+
+@media (max-width: 640px) {
+  .top-inner { display: flex; justify-content: space-between; padding: 0 16px; }
+  .top-inner > span { display: none; }
+  .top nav { gap: 22px; }
+  .top nav a { font-size: .95rem; }
+  .band { padding: 56px 0; }
+}
