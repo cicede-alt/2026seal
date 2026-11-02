@@ -15,8 +15,8 @@ a { color: inherit; }
 .top nav a:hover { color: var(--brand); }
 
 .hero { min-height: 42vh; display: grid; place-items: center; text-align: center; color: #fff; padding: 96px 20px 48px; background: linear-gradient(rgba(30,18,8,.6), rgba(30,18,8,.6)), var(--hero), linear-gradient(135deg, #5b3a1a, #2a1a0c); background-size: cover; background-position: center; }
-.hero h1 { font-family: var(--serif); font-size: clamp(calc(1.7rem + 2px), calc(5vw + 2px), calc(2.6rem + 2px)); margin: 8px 0 12px; line-height: 1.25; }
-.hero .eyebrow { color: #e8c99a; font-size: calc(.8rem + 2px); }
+.hero h1 { font-family: var(--serif); font-size: clamp(calc(1.7rem + 2pt), calc(5vw + 2pt), calc(2.6rem + 2pt)); margin: 8px 0 12px; line-height: 1.25; }
+.hero .eyebrow { color: #e8c99a; font-size: calc(.8rem + 2pt); }
 .sub { font-size: 1.15rem; opacity: .9; margin: 0; }
 .meta { margin: 14px 0 20px; opacity: .8; }
 .btn { display: inline-block; margin-top: 12px; padding: 12px 28px; border: 1px solid #fff; border-radius: 999px; text-decoration: none; }
