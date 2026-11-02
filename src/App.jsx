@@ -2,22 +2,26 @@ import { useEffect, useState } from 'react'
 import { event } from './data/event.js'
 import { schedule } from './data/schedule.js'
 import { acts } from './data/script.js'
+import { cast } from './data/cast.js'
 import './App.css'
 
 const menu = [
   { id: 'schedule', label: '일정' },
   { id: 'script', label: '대본' },
+  { id: 'cast', label: '배우' },
 ]
 
-function Section({ id, no, en, ko, note, children }) {
+function Section({ id, no, en, ko, note, tone, children }) {
   return (
-    <section id={id} className="section">
-      <p className="eyebrow">{no} {en}</p>
-      <div className="sec-head">
-        <h2>{ko}</h2>
-        {note && <p className="sec-note">{note}</p>}
+    <section id={id} className="band" data-tone={tone}>
+      <div className="section">
+        <p className="eyebrow">{no} {en}</p>
+        <div className="sec-head">
+          <h2>{ko}</h2>
+          {note && <p className="sec-note">{note}</p>}
+        </div>
+        {children}
       </div>
-      {children}
     </section>
   )
 }
@@ -74,6 +78,26 @@ function Script() {
   )
 }
 
+function Cast() {
+  return (
+    <div className="cast">
+      {cast.map((c) => (
+        <div key={c.act} className="cast-act">
+          <h3>{c.act}</h3>
+          <ul>
+            {c.members.map((m) => (
+              <li key={m.role}>
+                <span className="role">{m.role}{m.en && <small>{m.en}</small>}</span>
+                <b>{m.name}</b>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </div>
+  )
+}
+
 export default function App() {
   const [scrolled, setScrolled] = useState(false)
   useEffect(() => {
@@ -103,8 +127,9 @@ export default function App() {
       </div>
 
       <main>
-        <Section id="schedule" no="01" en="SCHEDULE" ko="연습 및 공연 일정" note="연습 일정은 상황에 따라 변경·추가될 수 있습니다. 변경되면 바로 알려드릴게요."><Schedule /></Section>
-        <Section id="script" no="02" en="SCRIPT" ko="대본 (1~4막)"><Script /></Section>
+        <Section id="schedule" no="01" en="SCHEDULE" ko="연습 및 공연 일정" tone="cream" note="연습 일정은 상황에 따라 변경·추가될 수 있습니다. 변경되면 바로 알려드릴게요."><Schedule /></Section>
+        <Section id="script" no="02" en="SCRIPT" ko="대본 (1~4막)" tone="sand"><Script /></Section>
+        <Section id="cast" no="03" en="CAST" ko="배역과 배우" tone="white" note="(직분생략)"><Cast /></Section>
       </main>
 
       <footer>© 2026 ALL RIGHTS RESERVED.</footer>

@@ -22,7 +22,11 @@ a { color: inherit; }
 .btn { display: inline-block; margin-top: 12px; padding: 12px 28px; border: 1px solid #fff; border-radius: 999px; text-decoration: none; }
 .btn:hover { background: #fff; color: var(--brand); }
 
-.section { max-width: 760px; margin: 0 auto; padding: 72px 20px 24px; }
+.band { padding: 72px 0; }
+.band[data-tone="cream"] { background: var(--bg); }
+.band[data-tone="sand"] { background: #f0e8dc; }
+.band[data-tone="white"] { background: #fff; }
+.section { max-width: 760px; margin: 0 auto; padding: 0 20px; }
 .eyebrow { font-size: .8rem; letter-spacing: .15em; color: var(--brand); font-weight: 700; margin: 0; }
 .sec-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 4px 16px; margin: 6px 0 28px; }
 .section h2 { font-size: 1.8rem; margin: 0; }
@@ -43,6 +47,15 @@ a { color: inherit; }
 .lines b { flex: 0 0 4.5em; color: var(--brand); }
 .lines .note { color: #999; font-style: italic; display: block; }
 
-footer { margin-top: 80px; padding: 28px; text-align: center; color: #999; font-size: .85rem; border-top: 1px solid #e5e0d8; }
+footer { margin-top: 0; padding: 28px; text-align: center; color: #999; font-size: .85rem; border-top: 1px solid #e5e0d8; }
 .to-top { position: fixed; right: 18px; bottom: 18px; width: 44px; height: 44px; display: grid; place-items: center; border-radius: 50%; background: var(--brand); color: #fff; text-decoration: none; font-size: 1.2rem; box-shadow: 0 2px 8px rgba(0,0,0,.25); }
 .doc { width: 100%; height: 75vh; border: 1px solid #eee; border-radius: 14px; background: #fff; }
+
+.cast { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; }
+.cast-act { background: var(--bg); border: 1px solid #eee3d3; border-radius: 14px; padding: 18px 20px; }
+.cast-act h3 { margin: 0 0 10px; color: var(--brand); font-size: 1.05rem; }
+.cast-act ul { list-style: none; margin: 0; padding: 0; }
+.cast-act li { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding: 9px 0; border-top: 1px solid #f1ede6; }
+.cast-act li:first-child { border-top: 0; }
+.role small { display: block; color: #aaa; font-size: .75rem; }
+
