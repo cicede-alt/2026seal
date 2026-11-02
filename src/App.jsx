@@ -8,7 +8,7 @@ import './App.css'
 const menu = [
   { id: 'schedule', label: '일정' },
   { id: 'script', label: '대본' },
-  { id: 'cast', label: '배우' },
+  { id: 'cast', label: '출연진' },
 ]
 
 function Section({ id, no, en, ko, note, tone, children }) {
