@@ -82,18 +82,19 @@ export default function App() {
   return (
     <>
       <header className="top">
+        <div className="top-inner">
         <a href="#top" className="logo">2026 성극</a>
         <nav>
           {menu.map((m) => <a key={m.id} href={`#${m.id}`}>{m.label}</a>)}
         </nav>
+        <span />
+        </div>
       </header>
 
       <div id="top" className="hero" style={{ '--hero': `url(${event.heroImage})` }}>
         <div className="hero-inner">
-          <p className="eyebrow">2026 CHRISTMAS PLAY</p>
+          <p className="eyebrow">2026 성탄전야</p>
           <h1>{event.title}</h1>
-          <p className="sub">{event.subtitle}</p>
-          <p className="meta">{event.period} · {event.place}</p>
           <a className="btn" href="#schedule">일정 보기</a>
         </div>
       </div>
