@@ -207,7 +207,7 @@ function RoleScript() {
           return (
             <p key={i} className={`rs-line${hit ? ' mine' : ''}`} style={hit ? { '--hl': colorOf(hit) } : undefined}>
               <b>{x.label}</b>
-              <span>{x.text}</span>
+              <span>{x.text.split(/(\([^)]*\))/).map((t, j) => (t.startsWith('(') ? <i key={j} className="rs-dir">{t}</i> : t))}</span>
             </p>
           )
         })}

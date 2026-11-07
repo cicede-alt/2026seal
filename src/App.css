@@ -113,3 +113,11 @@ footer { margin-top: 0; padding: 28px; text-align: center; color: #999; font-siz
 .rs-colors { display: flex; align-items: center; gap: 6px; width: 100%; font-size: .8rem; color: var(--muted); }
 .rs-bar .rs-colors button { width: 24px; height: 24px; padding: 0; border-radius: 50%; border: 2px solid #fff; box-shadow: 0 0 0 1px #bbb; }
 .rs-bar .rs-colors button.on { box-shadow: 0 0 0 2px var(--brand); background-clip: padding-box; }
+
+.rs-dir { font-style: italic; color: #8a8a8a; }
+.rs-body { font-size: .88rem; }
+.rs-line b { font-size: .84rem; }
+.rs-note { font-size: .84rem; }
+.rs-cue-line { font-size: .72rem; }
+.rs-scene { font-size: 1rem; }
+.rs-chapter { font-size: 1.1rem; }
