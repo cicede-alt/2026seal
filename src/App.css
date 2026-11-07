@@ -95,7 +95,7 @@ footer { margin-top: 0; padding: 28px; text-align: center; color: #999; font-siz
 .rs-line b { flex: 0 0 5.5em; color: var(--brand); font-size: .92rem; }
 .rs-line span { white-space: pre-line; }
 .rs-line.mine { background: var(--hl, #ffe7a3); box-shadow: inset 4px 0 0 var(--brand); }
-@media (max-width: 600px) { .rs-line { flex-direction: column; gap: 2px; } .rs-line b { flex: none; } }
+@media (max-width: 600px) { .rs-line { gap: 8px; padding: 7px 8px; } .rs-line b { flex: 0 0 3.6em; font-size: .78rem; line-height: 1.9; word-break: keep-all; } .rs-body { padding: 4px 10px 14px; } }
 
 .rs-body { height: 65vh; overflow-y: auto; background: #fff; border: 1px solid #eee; border-radius: 14px; padding: 6px 18px 18px; }
 .rs-body > :first-child { margin-top: 12px; }
