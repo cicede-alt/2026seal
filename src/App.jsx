@@ -1,8 +1,9 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { event } from './data/event.js'
 import { schedule } from './data/schedule.js'
 import { acts } from './data/script.js'
 import { cast } from './data/cast.js'
+import { roles, act1 } from './data/act1test.js'
 import './App.css'
 
 const menu = [
@@ -118,6 +119,104 @@ function Script() {
   )
 }
 
+// 씬 단위로 페이지를 나눕니다. (막/장 제목은 뒤따르는 씬 페이지에 붙음)
+const pages = (() => {
+  const out = []
+  let cur = []
+  let hasScene = false
+  for (const x of act1) {
+    if (x.t === 'scene' && hasScene) { out.push(cur); cur = []; hasScene = false }
+    if (x.t === 'scene') hasScene = true
+    cur.push(x)
+  }
+  if (cur.length) out.push(cur)
+  return out
+})()
+const palette = ['#ffe7a3', '#ffc9c9', '#ffd8a8', '#c3f0ca', '#b9e6f5', '#d9ccff', '#f6c6e8', '#e0e0e0']
+const pageTitle = (p) => (p.find((x) => x.t === 'scene')?.text || '').replace(/^씬\s*/, '')
+
+function RoleScript() {
+  const read = (k, d) => { try { return JSON.parse(localStorage.getItem(k)) ?? d } catch { return d } }
+  const write = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)) } catch { /* ignore */ } }
+  const [mine, setMine] = useState(() => {
+    const v = read('myRoles', null)
+    return Array.isArray(v) ? v : []
+  })
+  const [colors, setColors] = useState(() => read('roleColors', {}))
+  const [hideCue, setHideCue] = useState(false)
+  const [pg, setPg] = useState(0)
+  const [all, setAll] = useState(true)
+  const bodyRef = useRef(null)
+  const colorOf = (r) => colors[r] || palette[Math.max(0, roles.indexOf(r)) % palette.length]
+  const toggle = (r) => {
+    const next = mine.includes(r) ? mine.filter((x) => x !== r) : [...mine, r]
+    setMine(next)
+    write('myRoles', next)
+  }
+  const clear = () => { setMine([]); write('myRoles', []) }
+  const setColor = (r, c) => {
+    const next = { ...colors, [r]: c }
+    setColors(next)
+    write('roleColors', next)
+  }
+  const go = (n) => {
+    setAll(false)
+    setPg(Math.max(0, Math.min(pages.length - 1, n)))
+    if (bodyRef.current) bodyRef.current.scrollTop = 0
+  }
+  const nav = (
+    <div className="rs-pager">
+      <button onClick={() => go(pg - 1)} disabled={all || pg === 0}>← 이전</button>
+      <div className="rs-pages">
+        {pages.map((p, i) => (
+          <button key={i} className={!all && i === pg ? 'on' : ''} onClick={() => go(i)} title={pageTitle(p)}>{i + 1}</button>
+        ))}
+        <button className={`rs-all${all ? ' on' : ''}`} onClick={() => { setAll(true); if (bodyRef.current) bodyRef.current.scrollTop = 0 }}>전체 보기</button>
+      </div>
+      <button onClick={() => go(pg + 1)} disabled={all || pg === pages.length - 1}>다음 →</button>
+    </div>
+  )
+  return (
+    <div className="rs">
+      <div className="rs-bar">
+        <span>내 배역 (여러 명 선택 가능)</span>
+        <button className={mine.length === 0 ? 'on' : ''} onClick={clear}>선택 안 함</button>
+        {roles.map((r) => (
+          <button key={r} className={mine.includes(r) ? 'on' : ''} style={mine.includes(r) ? { background: colorOf(r), borderColor: colorOf(r), color: '#222' } : undefined} onClick={() => toggle(r)}>{r}</button>
+        ))}
+        {mine.map((r) => (
+          <div className="rs-colors" key={r}>
+            <span>{r} 색상</span>
+            {palette.map((c) => (
+              <button key={c} className={c === colorOf(r) ? 'on' : ''} style={{ background: c }} onClick={() => setColor(r, c)} aria-label={`${r} 색상 ${c}`} />
+            ))}
+          </div>
+        ))}
+        <label className="rs-cue"><input type="checkbox" checked={hideCue} onChange={(e) => setHideCue(e.target.checked)} /> 음악·조명 큐 숨기기</label>
+      </div>
+      {nav}
+      <p className="rs-now">{all ? `전체 보기 · ${pages.length}개 씬` : `${pg + 1} / ${pages.length} 페이지 · ${pageTitle(pages[pg])}`}</p>
+      <div className="rs-body" ref={bodyRef}>
+        {(all ? pages.flat() : pages[pg]).map((x, i) => {
+          if (x.t === 'chapter') return <h3 key={i} className="rs-chapter">{x.text}</h3>
+          if (x.t === 'sub') return <p key={i} className="rs-sub">{x.text}</p>
+          if (x.t === 'scene') return <h4 key={i} className="rs-scene">{x.text}</h4>
+          if (x.t === 'cue') return hideCue ? null : <p key={i} className="rs-cue-line">{x.text}</p>
+          if (x.t === 'note') return <p key={i} className="rs-note">{x.text}</p>
+          const hit = x.who.find((w) => mine.includes(w))
+          return (
+            <p key={i} className={`rs-line${hit ? ' mine' : ''}`} style={hit ? { '--hl': colorOf(hit) } : undefined}>
+              <b>{x.label}</b>
+              <span>{x.text}</span>
+            </p>
+          )
+        })}
+      </div>
+      {nav}
+    </div>
+  )
+}
+
 function Cast() {
   return (
     <div className="cast">
@@ -170,6 +269,7 @@ export default function App() {
         <Section id="schedule" no="01" en="SCHEDULE" ko="연습 및 공연 일정" tone="cream" note="연습 일정은 상황에 따라 변경·추가될 수 있습니다. 변경되면 바로 알려드릴게요."><Schedule /></Section>
         <Section id="script" no="02" en="SCRIPT" ko="대본 (1~4막)" tone="sand"><Script /></Section>
         <Section id="cast" no="03" en="CAST" ko="배역과 배우" tone="white" note="(직분생략)"><Cast /></Section>
+        <Section id="test" no="04" en="TEST" ko="대본 배역 강조 (테스트 · 1막 v1.1)" tone="sand" note="내 배역을 고르면 해당 대사에 색이 칠해집니다. 테스트용 화면입니다."><RoleScript /></Section>
       </main>
 
       <footer>© 2026 ALL RIGHTS RESERVED.</footer>
