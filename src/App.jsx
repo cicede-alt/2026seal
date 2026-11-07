@@ -70,18 +70,32 @@ function Schedule() {
 
 function Script() {
   const [actId, setActId] = useState(acts[0].id)
+  const [oldVer, setOldVer] = useState(null)
   const act = acts.find((a) => a.id === actId)
+  const olds = (act.old || []).filter((o) => o.docUrl)
+  const viewing = olds.find((o) => o.version === oldVer)
+  const pick = (id) => { setActId(id); setOldVer(null) }
   return (
     <>
       <div className="tabs">
         {acts.map((a) => (
-          <button key={a.id} className={a.id === actId ? 'on' : ''} onClick={() => setActId(a.id)}>
-            {a.title}
+          <button key={a.id} className={a.id === actId ? 'on' : ''} onClick={() => pick(a.id)}>
+            {a.title}<small>{a.version}</small>
           </button>
         ))}
       </div>
+      {viewing ? (
+        <div className="ver-warn">
+          ⚠ 이전 버전({viewing.version})입니다. 최신은 {act.version}
+          <button onClick={() => setOldVer(null)}>최신본 보기</button>
+        </div>
+      ) : (
+        act.changes && act.version !== 'v1.0' && (
+          <p className="ver-note"><b>{act.version} 변경</b> {act.changes}</p>
+        )
+      )}
       {act.docUrl ? (
-        <iframe className="doc" src={act.docUrl} title={act.title} />
+        <iframe className={`doc${viewing ? ' old' : ''}`} src={viewing ? viewing.docUrl : act.docUrl} title={act.title} />
       ) : (
       <div className="lines">
         {act.lines.map((l, i) =>
@@ -92,6 +106,13 @@ function Script() {
           ),
         )}
       </div>
+      )}
+      {!viewing && olds.length > 0 && (
+        <p className="ver-old">
+          {olds.map((o) => (
+            <button key={o.version} onClick={() => setOldVer(o.version)}>이전 버전({o.version}) 보기</button>
+          ))}
+        </p>
       )}
     </>
   )

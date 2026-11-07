@@ -71,3 +71,12 @@ footer { margin-top: 0; padding: 28px; text-align: center; color: #999; font-siz
 .card.next { border: 2px solid var(--brand); box-shadow: 0 4px 16px rgba(138,90,43,.15); }
 .badge { display: inline-block; font-style: normal; font-size: .72rem; font-weight: 700; padding: 2px 8px; margin-bottom: 6px; border-radius: 999px; background: #eee; color: #777; }
 .card.next .badge { background: var(--brand); color: #fff; }
+
+.tabs button small { display: block; font-size: .7rem; opacity: .7; margin-top: 2px; }
+.ver-note { margin: 0 0 12px; font-size: .9rem; color: var(--brand); }
+.ver-note b { margin-right: 6px; }
+.ver-warn { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 12px; padding: 10px 14px; background: #fdecea; color: #b3261e; border-radius: 10px; font-size: .9rem; font-weight: 700; }
+.ver-warn button { border: 0; background: #b3261e; color: #fff; border-radius: 8px; padding: 6px 10px; cursor: pointer; white-space: nowrap; }
+.ver-old { margin: 10px 0 0; text-align: right; }
+.ver-old button { border: 0; background: none; color: var(--muted); font-size: .8rem; text-decoration: underline; cursor: pointer; }
+.doc.old { opacity: .6; filter: grayscale(1); }
