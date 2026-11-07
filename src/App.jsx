@@ -194,7 +194,6 @@ function RoleScript() {
         ))}
         <label className="rs-cue"><input type="checkbox" checked={hideCue} onChange={(e) => setHideCue(e.target.checked)} /> 음악·조명 큐 숨기기</label>
       </div>
-      {nav}
       <p className="rs-now">{all ? `전체 보기 · ${pages.length}개 씬` : `${pg + 1} / ${pages.length} 페이지 · ${pageTitle(pages[pg])}`}</p>
       <div className="rs-body" ref={bodyRef}>
         {(all ? pages.flat() : pages[pg]).map((x, i) => {
@@ -237,6 +236,9 @@ function Cast() {
   )
 }
 
+// 테스트 섹션은 주소 끝에 ?test 를 붙였을 때만 보입니다. (예: 2026seal.web.app/?test)
+const showTest = new URLSearchParams(window.location.search).has('test')
+
 export default function App() {
   const [scrolled, setScrolled] = useState(false)
   useEffect(() => {
@@ -269,7 +271,7 @@ export default function App() {
         <Section id="schedule" no="01" en="SCHEDULE" ko="연습 및 공연 일정" tone="cream" note="연습 일정은 상황에 따라 변경·추가될 수 있습니다. 변경되면 바로 알려드릴게요."><Schedule /></Section>
         <Section id="script" no="02" en="SCRIPT" ko="대본 (1~4막)" tone="sand"><Script /></Section>
         <Section id="cast" no="03" en="CAST" ko="배역과 배우" tone="white" note="(직분생략)"><Cast /></Section>
-        <Section id="test" no="04" en="TEST" ko="대본 배역 강조 (테스트 · 1막 v1.1)" tone="sand" note="내 배역을 고르면 해당 대사에 색이 칠해집니다. 테스트용 화면입니다."><RoleScript /></Section>
+        {showTest && <Section id="test" no="04" en="TEST" ko="대본 배역 강조 (테스트 · 1막 v1.1)" tone="sand" note="내 배역을 고르면 해당 대사에 색이 칠해집니다. 테스트용 화면입니다."><RoleScript /></Section>}
       </main>
 
       <footer>© 2026 ALL RIGHTS RESERVED.</footer>
