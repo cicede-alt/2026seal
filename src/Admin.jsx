@@ -57,7 +57,7 @@ const encode = async (c, q) => {
 // 브라우저에서 두 가지로 줄여 WebP data URL 로 돌려줍니다.
 //  - thumb: 가운데를 정사각형으로 잘라 100x100 (목록용)
 //  - big:   긴 변 600px 이내, 비율 유지 (팝업용)
-async function shrink(file) {
+export async function shrink(file) {
   const bmp = await createImageBitmap(file)
   const side = Math.min(bmp.width, bmp.height)
   const t = document.createElement('canvas')
@@ -96,7 +96,7 @@ export function Lightbox({ src, onClose }) {
   )
 }
 
-function Login() {
+export function Login({ inline }) {
   const [f, setF] = useState({ id: '', pw: '' })
   const [err, setErr] = useState('')
   const [busy, setBusy] = useState(false)
@@ -115,8 +115,8 @@ function Login() {
     setBusy(false)
   }
   return (
-    <div className="adm adm-login">
-      <h1>무대 관리자</h1>
+    <div className={inline ? 'adm-inline' : 'adm adm-login'}>
+      {!inline && <h1>무대 관리자</h1>}
       <form className="adm-form" onSubmit={submit}>
         <input placeholder="아이디" autoComplete="username" value={f.id} onChange={(e) => setF({ ...f, id: e.target.value })} />
         <input placeholder="비밀번호" type="password" autoComplete="current-password" value={f.pw} onChange={(e) => setF({ ...f, pw: e.target.value })} />

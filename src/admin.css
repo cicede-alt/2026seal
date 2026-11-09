@@ -92,3 +92,8 @@
 }
 
 .noimg { width: 100px; height: 100px; display: grid; place-items: center; border-radius: 8px; background: #f3eee6; border: 1px dashed #d8cdb9; color: #a89a82; font-size: .8rem; }
+
+.pub-add { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin: 4px 0 12px; }
+.pub-add button { padding: 8px 14px; border: 1px solid #ccc; background: #fff; border-radius: 8px; cursor: pointer; font-size: .9rem; }
+.pub-add button.pri { background: var(--brand); border-color: var(--brand); color: #fff; }
+.adm-inline { max-width: 360px; margin-bottom: 12px; }

@@ -1,9 +1,64 @@
 import { useEffect, useState } from 'react'
-import { collection, onSnapshot, query, where } from 'firebase/firestore'
+import { addDoc, collection, onSnapshot, query, where } from 'firebase/firestore'
+import { onAuthStateChanged, signOut } from 'firebase/auth'
 import { acts } from './data/script.js'
-import { db, configured } from './data/firebase.js'
-import { statusOf, fmtTime, Lightbox, actTabs, actLabel, forAct, inAct } from './Admin.jsx'
+import { auth, db, configured } from './data/firebase.js'
+import { statusOf, fmtTime, Lightbox, Login, shrink, actTabs, actLabel, forAct, inAct } from './Admin.jsx'
 import './admin.css'
+
+/** 소품 추가 입력칸 (로그인한 사람에게만 보입니다) */
+function AddForm({ actId, onMsg }) {
+  const blank = { title: '', owner: '', note: '', image: '', imageBig: '' }
+  const [form, setForm] = useState(blank)
+  const [act, setAct] = useState(null)
+  const [busy, setBusy] = useState(false)
+  const curAct = act ?? (actId === 'all' ? acts[0].id : actId)
+
+  const upload = async (e) => {
+    const f = e.target.files[0]
+    e.target.value = ''
+    if (!f) return
+    setBusy(true); onMsg('사진 변환 중…')
+    try {
+      const { url, big } = await shrink(f)
+      setForm((x) => ({ ...x, image: url, imageBig: big }))
+      onMsg('')
+    } catch { onMsg('사진을 처리할 수 없습니다. 다른 사진으로 해 보세요.') }
+    setBusy(false)
+  }
+  const submit = async (e) => {
+    e.preventDefault()
+    if (!form.title.trim() || busy) return
+    setBusy(true); onMsg('저장 중…')
+    try {
+      await addDoc(collection(db, 'items'), {
+        kind: 'props', act: curAct, title: form.title.trim(), owner: form.owner.trim(), note: form.note.trim(),
+        image: form.image, imageBig: form.imageBig, status: '준비전', doneAt: null, order: Date.now(),
+      })
+      setForm(blank); setAct(null); onMsg('저장됨')
+    } catch (x) { onMsg(`저장 실패: ${x.code || x.message}`) }
+    setBusy(false)
+  }
+  return (
+    <form className="adm-form" onSubmit={submit}>
+      <select value={curAct} onChange={(e) => setAct(e.target.value === 'etc' ? 'etc' : Number(e.target.value))} aria-label="막 선택">
+        {actTabs.filter((a) => a.id !== 'all').map((a) => <option key={a.id} value={a.id}>{a.title}</option>)}
+      </select>
+      <input placeholder="소품명" value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} />
+      <input placeholder="담당자" value={form.owner} onChange={(e) => setForm({ ...form, owner: e.target.value })} />
+      <textarea rows={2} placeholder="사용 장면 / 메모" value={form.note} onChange={(e) => setForm({ ...form, note: e.target.value })} />
+      <div className="adm-img">
+        <label className="adm-file">
+          {busy && !form.image ? '처리 중…' : form.image ? '사진 바꾸기' : '사진 추가'}
+          <input type="file" accept="image/*" hidden disabled={busy} onChange={upload} />
+        </label>
+        {form.image ? <img src={form.image} alt="" /> : null}
+        {form.image && <button type="button" onClick={() => setForm({ ...form, image: '', imageBig: '' })}>사진 삭제</button>}
+      </div>
+      <div><button className="pri" type="submit" disabled={busy}>소품추가(저장)</button></div>
+    </form>
+  )
+}
 
 // /props : 누구나 볼 수 있는 읽기 전용 소품 목록입니다. (수정은 /admin)
 export default function Props() {
@@ -11,6 +66,12 @@ export default function Props() {
   const [err, setErr] = useState('')
   const [actId, setActId] = useState(acts[0].id)
   const [big, setBig] = useState('')
+  const [user, setUser] = useState(null)
+  const [msg, setMsg] = useState('')
+  const [adding, setAdding] = useState(false)
+  const [loginOpen, setLoginOpen] = useState(false)
+
+  useEffect(() => (configured ? onAuthStateChanged(auth, (u) => { setUser(u); if (u) setLoginOpen(false) }) : undefined), [])
 
   useEffect(() => {
     if (!configured) return undefined
@@ -32,6 +93,19 @@ export default function Props() {
         <h1>소품 목록</h1>
         <div><a href="/">← 메인으로</a></div>
       </header>
+      <div className="pub-add">
+        {user ? (
+          <>
+            <button className="pri" onClick={() => setAdding(!adding)}>{adding ? '추가 닫기' : '+ 소품 추가'}</button>
+            <button onClick={() => signOut(auth)}>로그아웃</button>
+          </>
+        ) : (
+          <button onClick={() => setLoginOpen(!loginOpen)}>{loginOpen ? '닫기' : '로그인하고 소품 추가'}</button>
+        )}
+        {msg && <span className="adm-status">{msg}</span>}
+      </div>
+      {!user && loginOpen && <Login inline />}
+      {user && adding && <AddForm actId={actId} onMsg={setMsg} />}
       {items && <p className="adm-warn">전체 {total}개 중 {done}개 준비 완료</p>}
 
       <div className="adm-tabs">
