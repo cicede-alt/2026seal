@@ -1,0 +1,60 @@
+.adm { max-width: 760px; margin: 0 auto; padding: 20px 16px 60px; }
+.adm-top { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
+.adm-top h1 { margin: 0; font-size: 1.5rem; }
+.adm-top div { display: flex; gap: 8px; align-items: center; }
+.adm-top a { color: var(--muted); font-size: .9rem; margin-right: 6px; }
+.adm button { padding: 7px 12px; border: 1px solid #ccc; background: #fff; border-radius: 8px; cursor: pointer; font-size: .85rem; }
+.adm button:disabled { opacity: .3; cursor: default; }
+.adm button.pri, .adm-tabs button.on { background: var(--brand); border-color: var(--brand); color: #fff; }
+.adm-warn { font-size: .8rem; color: #999; margin: 8px 0 16px; }
+.adm-tabs { display: flex; gap: 8px; margin-bottom: 10px; }
+.adm-tabs button { flex: 1; padding: 10px; font-size: 1rem; }
+.adm-tabs small { margin-left: 6px; opacity: .7; font-size: .75rem; }
+.adm-tabs.sub button { font-size: .92rem; padding: 8px; }
+.adm-form { display: grid; gap: 8px; background: #fff; border: 1px solid #eee; border-radius: 14px; padding: 14px; margin: 14px 0; }
+.adm-form input, .adm-form textarea, .adm-form select { padding: 9px 10px; border: 1px solid #ddd; border-radius: 8px; font: inherit; resize: vertical; }
+.adm-form div { display: flex; gap: 8px; }
+.adm-empty { text-align: center; color: #aaa; padding: 30px 0; }
+.adm-login { max-width: 360px; padding-top: 80px; }
+.adm-err { margin: 0; color: #b3261e; font-size: .85rem; }
+.adm-status { font-size: .8rem; color: var(--muted); }
+.adm-img { align-items: center; flex-wrap: wrap; }
+.adm-file { padding: 7px 12px; border: 1px solid #ccc; background: #fff; border-radius: 8px; cursor: pointer; font-size: .85rem; }
+.adm-img img { width: 100px; height: 100px; object-fit: cover; border-radius: 8px; border: 1px solid #eee; }
+
+.adm-table { width: 100%; border-collapse: collapse; background: #fff; border: 1px solid #eee; border-radius: 12px; overflow: hidden; font-size: .9rem; }
+.adm-table th { background: #f6f1e8; color: var(--brand); font-size: .78rem; text-align: left; padding: 9px 10px; white-space: nowrap; }
+.adm-table td { padding: 10px; border-top: 1px solid #f1ede6; vertical-align: middle; }
+.adm-table td:first-child { width: 48px; color: var(--muted); }
+.adm-table .nm p { margin: 3px 0 0; font-size: .8rem; color: var(--muted); white-space: pre-line; }
+.adm-table .none { color: #ccc; }
+.adm-table .thumb { width: 100px; height: 100px; object-fit: cover; border-radius: 8px; cursor: zoom-in; background: #f0e8dc; display: block; }
+.adm-table select { padding: 5px 8px; border: 1px solid #ccc; border-radius: 8px; background: #fff; font: inherit; font-size: .85rem; }
+.adm-table tr.st-완료 select { background: #e3f4e6; border-color: #9fd3a8; }
+.adm-table tr.st-준비\ 중 select { background: #fff3d6; border-color: #e8c76a; }
+.adm-table .acts { white-space: nowrap; text-align: right; }
+.adm-table .acts button { padding: 4px 8px; font-size: .75rem; margin-left: 3px; }
+.adm-scroll { overflow-x: auto; }
+.adm-view { display: flex; gap: 6px; justify-content: flex-end; margin-bottom: 8px; }
+.adm-view button.on { background: var(--brand); border-color: var(--brand); color: #fff; }
+.adm-table.cards thead { display: none; }
+.adm-table.cards, .adm-table.cards tbody { display: block; border: 0; background: none; }
+.adm-table.cards tr { display: block; background: #fff; border: 1px solid #eee; border-radius: 12px; padding: 6px 12px; margin-bottom: 10px; }
+.adm-table.cards td { display: flex; justify-content: space-between; align-items: center; gap: 12px; border: 0; padding: 6px 0; width: auto !important; }
+.adm-table.cards td::before { content: attr(data-label); color: var(--muted); font-size: .75rem; flex: 0 0 5em; }
+.adm-table.cards .acts { justify-content: flex-start; }
+.adm-table.cards .acts::before { content: none; }
+.adm-table:not(.cards) { min-width: 640px; }
+
+.pub { padding-top: 28px; }
+.badge-st { display: inline-block; padding: 3px 10px; border-radius: 999px; font-size: .78rem; font-weight: 700; background: #eee; color: #777; white-space: nowrap; }
+.badge-st.st-준비\ 중 { background: #fff3d6; color: #8a6a00; }
+.badge-st.st-완료 { background: #e3f4e6; color: #256b33; }
+
+.adm-big { position: fixed; inset: 0; z-index: 50; background: rgba(0,0,0,.78); display: grid; place-items: center; padding: 16px; cursor: zoom-out; }
+.adm-big img { max-width: min(92vw, 640px); max-height: 88vh; border-radius: 12px; background: #fff; box-shadow: 0 8px 32px rgba(0,0,0,.4); }
+.adm-big button { position: absolute; top: 14px; right: 14px; width: 40px; height: 40px; border: 0; border-radius: 50%; background: rgba(255,255,255,.9); font-size: 1.1rem; cursor: pointer; }
+
+.adm-row { display: flex; gap: 8px; }
+.adm-row input { flex: 1; min-width: 0; }
+.adm-tabs.main button { font-size: .95rem; }

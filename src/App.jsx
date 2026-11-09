@@ -10,6 +10,7 @@ const menu = [
   { id: 'schedule', label: '일정' },
   { id: 'script', label: '대본' },
   { id: 'cast', label: '출연진' },
+  { href: '/props', label: '소품' },
 ]
 
 function Section({ id, no, en, ko, note, tone, children }) {
@@ -39,7 +40,28 @@ const getToday = () => {
   return new Date(t.getFullYear(), t.getMonth(), t.getDate())
 }
 
+// 일정은 관리자(/admin)에서 수정한 Firestore 값을 쓰고, 없거나 읽지 못하면 data/schedule.js 를 보여 줍니다.
+// Firebase 는 메인 화면 로딩을 늦추지 않도록 필요할 때 불러옵니다.
+function useSchedule() {
+  const [list, setList] = useState(schedule)
+  useEffect(() => {
+    let off = () => {}
+    let dead = false
+    Promise.all([import('./data/firebase.js'), import('firebase/firestore')]).then(([f, fs]) => {
+      if (dead || !f.configured) return
+      off = fs.onSnapshot(fs.collection(f.db, 'schedule'), (snap) => {
+        const l = snap.docs.map((d) => d.data()).filter((s) => s.date && s.title)
+          .sort((a, b) => `${a.date} ${a.time || ''}`.localeCompare(`${b.date} ${b.time || ''}`))
+        setList(l.length ? l : schedule)
+      }, () => setList(schedule))
+    }).catch(() => {})
+    return () => { dead = true; off() }
+  }, [])
+  return list
+}
+
 function Schedule() {
+  const schedule = useSchedule()
   const today = getToday()
   const nextIdx = schedule.findIndex((s) => toDate(s.date) >= today)
   return (
@@ -253,7 +275,7 @@ export default function App() {
         <div className="top-inner">
         <a href="#top" className="logo">2026 성극</a>
         <nav>
-          {menu.map((m) => <a key={m.id} href={`#${m.id}`}>{m.label}</a>)}
+          {menu.map((m) => <a key={m.label} href={m.href || `#${m.id}`}>{m.label}</a>)}
         </nav>
         <span />
         </div>
