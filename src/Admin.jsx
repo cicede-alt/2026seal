@@ -37,7 +37,9 @@ export const fmtTime = (ms) => {
 const MAX_IMG = 600 * 1024 // 저장 이미지 최대 크기(바이트). Firestore 문서 1MB 제한 안쪽으로.
 
 const IMG_SIZE = 100 // 목록용 썸네일 (px, 정사각형)
-const BIG_SIZE = 600 // 팝업용 큰 사진 (긴 변 기준 px)
+const BIG_SIZE = 480 // 팝업용 큰 사진 (긴 변 기준 px)
+const THUMB_MAX = 4 * 1024 // 썸네일 목표 용량(바이트)
+const BIG_MAX = 20 * 1024 // 팝업용 목표 용량(바이트)
 
 const toUrl = (blob) => new Promise((ok, no) => {
   const fr = new FileReader()
@@ -45,18 +47,21 @@ const toUrl = (blob) => new Promise((ok, no) => {
   fr.onerror = no
   fr.readAsDataURL(blob)
 })
-const encode = async (c, q) => {
-  const toBlob = (type, qq) => new Promise((ok) => c.toBlob(ok, type, qq))
-  let blob = await toBlob('image/webp', q)
-  if (!blob || blob.type !== 'image/webp') blob = await toBlob('image/jpeg', q) // WebP 저장이 안 되는 브라우저
-  if (blob.size > MAX_IMG) blob = await toBlob(blob.type, 0.4)
+// 화질을 높은 것부터 단계적으로 낮추며, 목표 용량 이하가 되는 첫 결과를 씁니다. (끝까지 크면 가장 작은 결과)
+const encode = async (c, qualities, maxBytes) => {
+  const toBlob = (type, q) => new Promise((ok) => c.toBlob(ok, type, q))
+  let type = 'image/webp'
+  let blob = await toBlob(type, qualities[0])
+  if (!blob || blob.type !== 'image/webp') { type = 'image/jpeg'; blob = await toBlob(type, qualities[0]) } // WebP 저장이 안 되는 브라우저
+  for (let k = 1; blob.size > maxBytes && k < qualities.length; k++) blob = await toBlob(type, qualities[k])
   if (blob.size > MAX_IMG) throw new Error('too large')
   return blob
 }
 
 // 브라우저에서 두 가지로 줄여 WebP data URL 로 돌려줍니다.
 //  - thumb: 가운데를 정사각형으로 잘라 100x100 (목록용)
-//  - big:   긴 변 600px 이내, 비율 유지 (팝업용)
+//  - big:   긴 변 480px 이내, 비율 유지 (팝업용)
+// 용량은 목표(썸네일 4KB, 팝업용 20KB) 이하가 되도록 화질을 자동으로 낮춥니다.
 export async function shrink(file) {
   const bmp = await createImageBitmap(file)
   const side = Math.min(bmp.width, bmp.height)
@@ -75,7 +80,7 @@ export async function shrink(file) {
   gc.imageSmoothingQuality = 'high'
   gc.drawImage(bmp, 0, 0, g.width, g.height)
 
-  const [tb, gb] = [await encode(t, 0.7), await encode(g, 0.75)]
+  const [tb, gb] = [await encode(t, [0.7, 0.55, 0.4, 0.3], THUMB_MAX), await encode(g, [0.65, 0.5, 0.4, 0.3, 0.2], BIG_MAX)]
   return { url: await toUrl(tb), big: await toUrl(gb), size: tb.size + gb.size }
 }
 
