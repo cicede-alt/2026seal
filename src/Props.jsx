@@ -59,7 +59,7 @@ export default function Props() {
                       <td data-label="번호">{idx + 1}</td>
                       {all && <td data-label="막">{actLabel(i.act)}</td>}
                       <td data-label="소품명" className="nm"><b>{i.title}</b>{i.note && <p>{i.note}</p>}</td>
-                      <td data-label="사진">{i.image ? <img className="thumb" src={i.image} alt="" onClick={() => setBig(i.imageBig || i.image)} /> : <span className="none">-</span>}</td>
+                      <td data-label="사진">{i.image ? <img className="thumb" src={i.image} alt="" onClick={() => setBig(i.imageBig || i.image)} /> : <div className="noimg">준비중</div>}</td>
                       <td data-label="담당자">{i.owner || <span className="none">-</span>}</td>
                       <td data-label="준비상태"><span className={`badge-st st-${st}`}>{st}</span></td>
                       <td data-label="완료시간">{i.doneAt ? fmtTime(i.doneAt) : <span className="none">-</span>}</td>
