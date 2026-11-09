@@ -58,3 +58,19 @@
 .adm-row { display: flex; gap: 8px; }
 .adm-row input { flex: 1; min-width: 0; }
 .adm-tabs.main button { font-size: .95rem; }
+
+/* 소품 목록(/props): 좁은 화면에서는 가로 스크롤 대신 카드로 보여줍니다. */
+@media (max-width: 700px) {
+  .pub .adm-table:not(.cards) { min-width: 0; }
+  .pub .adm-table thead { display: none; }
+  .pub .adm-table, .pub .adm-table tbody { display: block; border: 0; background: none; }
+  .pub .adm-table tr { display: block; background: #fff; border: 1px solid #eee; border-radius: 12px; padding: 6px 12px; margin-bottom: 10px; }
+  .pub .adm-table td { display: flex; justify-content: space-between; align-items: center; gap: 12px; border: 0; padding: 6px 0; width: auto !important; }
+  .pub .adm-table td::before { content: attr(data-label); color: var(--muted); font-size: .75rem; flex: 0 0 5em; }
+}
+
+/* 좁은 화면: 탭을 3개씩 줄바꿈해서 글자가 세로로 깨지지 않게 합니다. */
+@media (max-width: 600px) {
+  .adm-tabs { display: grid; grid-template-columns: repeat(3, 1fr); }
+  .adm-tabs button { padding: 9px 4px; font-size: .95rem; white-space: nowrap; }
+}
