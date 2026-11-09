@@ -103,3 +103,7 @@
   .pub .adm-table td.acts button { padding: 5px 12px; }
   .pub .adm-table select { max-width: 100%; }
 }
+
+.adm-bulk { margin: 0 0 14px; }
+.adm-bulk > button { margin-bottom: 8px; }
+.adm-bulk .adm-form { margin-top: 0; }

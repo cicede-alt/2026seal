@@ -148,6 +148,7 @@ function Panel() {
   const [editId, setEditId] = useState(null)
   const [uploading, setUploading] = useState(false)
   const [section, setSection] = useState('stage')
+  const [bulk, setBulk] = useState({ open: false, text: '', owner: '미정' })
   const k = kinds.find((x) => x.id === kind)
 
   useEffect(() => onSnapshot(
@@ -193,6 +194,30 @@ function Panel() {
   }
   const edit = (i) => { setEditId(i.id); setForm({ act: i.act, title: i.title, owner: i.owner || '', note: i.note || '', image: i.image || '', imageBig: i.imageBig || '' }) }
   const del = (i) => { if (confirm(`"${i.title}" 항목을 삭제할까요?`)) run(deleteDoc(doc(db, 'items', i.id))) }
+  // 여러 줄을 한 번에 추가합니다. 한 줄에 `이름 | 메모`. 같은 막·종류에 같은 이름이 있으면 건너뜁니다.
+  const addBulk = () => {
+    const norm = (t) => t.replace(/\s+/g, '').toLowerCase()
+    const have = new Set(items.filter((i) => i.kind === kind && i.act === formAct).map((i) => norm(i.title)))
+    const rows = []
+    let skipped = 0
+    bulk.text.split(/\r?\n/).forEach((line) => {
+      const [t, ...n] = line.split('|')
+      const title = (t || '').trim()
+      if (!title) return
+      if (have.has(norm(title))) { skipped += 1; return }
+      have.add(norm(title))
+      rows.push({ title, note: n.join('|').trim() })
+    })
+    if (!rows.length) { setStatus(skipped ? `새로 추가할 항목이 없습니다 (중복 ${skipped}개)` : '추가할 내용을 입력해 주세요'); return }
+    if (!confirm(`${actLabel(formAct)} ${k.label} ${rows.length}개를 추가합니다.${skipped ? ` (중복 ${skipped}개 제외)` : ''} 계속할까요?`)) return
+    const batch = writeBatch(db)
+    const base = Date.now()
+    rows.forEach((r, n) => batch.set(doc(collection(db, 'items')), {
+      kind, act: formAct, title: r.title, owner: bulk.owner.trim(), note: r.note, image: '', imageBig: '',
+      status: '준비전', doneAt: null, order: base + n,
+    }))
+    run(batch.commit().then(() => setBulk({ open: false, text: '', owner: bulk.owner })))
+  }
   const setStatus_ = (i, st) => run(updateDoc(doc(db, 'items', i.id), { status: st, doneAt: st === '준비완료' ? Date.now() : null }))
   const move = (idx, d) => {
     const a = list[idx], b = list[idx + d]
@@ -256,6 +281,18 @@ function Panel() {
           {editId && <button type="button" onClick={reset}>취소</button>}
         </div>
       </form>
+
+      <div className="adm-bulk">
+        <button type="button" onClick={() => setBulk({ ...bulk, open: !bulk.open })}>{bulk.open ? '여러 개 추가 닫기' : '여러 개 한 번에 추가'}</button>
+        {bulk.open && (
+          <div className="adm-form">
+            <p className="adm-warn">위 ‘막 선택’({actLabel(formAct)})과 현재 탭({k.label})에 추가됩니다. 한 줄에 하나씩, 메모는 <b>이름 | 메모</b> 형식으로 적으세요. 이미 있는 이름은 자동으로 건너뜁니다.</p>
+            <textarea rows={8} placeholder={['왕의 홀 | 인물 소품', '봉인된 밀서 | 왕궁 대전'].join('\n')} value={bulk.text} onChange={(e) => setBulk({ ...bulk, text: e.target.value })} />
+            <input placeholder="담당자 (모두 같은 값)" value={bulk.owner} onChange={(e) => setBulk({ ...bulk, owner: e.target.value })} />
+            <div><button type="button" className="pri" onClick={addBulk}>한 번에 추가(저장)</button></div>
+          </div>
+        )}
+      </div>
 
       {list.length === 0 ? (
         <p className="adm-empty">{actLabel(actId)} {k.label}이(가) 아직 없습니다.</p>
