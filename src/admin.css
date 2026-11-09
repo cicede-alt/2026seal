@@ -59,14 +59,25 @@
 .adm-row input { flex: 1; min-width: 0; }
 .adm-tabs.main button { font-size: .95rem; }
 
-/* 소품 목록(/props): 좁은 화면에서는 가로 스크롤 대신 카드로 보여줍니다. */
+/* 소품 목록(/props): 좁은 화면에서는 가로 스크롤 대신 한 줄에 카드 2개씩 보여줍니다. */
 @media (max-width: 700px) {
+  .pub .adm-scroll { overflow: visible; }
   .pub .adm-table:not(.cards) { min-width: 0; }
   .pub .adm-table thead { display: none; }
   .pub .adm-table, .pub .adm-table tbody { display: block; border: 0; background: none; }
-  .pub .adm-table tr { display: block; background: #fff; border: 1px solid #eee; border-radius: 12px; padding: 6px 12px; margin-bottom: 10px; }
-  .pub .adm-table td { display: flex; justify-content: space-between; align-items: center; gap: 12px; border: 0; padding: 6px 0; width: auto !important; }
-  .pub .adm-table td::before { content: attr(data-label); color: var(--muted); font-size: .75rem; flex: 0 0 5em; }
+  .pub .adm-table tbody { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  .pub .adm-table tr { position: relative; display: flex; flex-direction: column; align-items: center; gap: 6px; text-align: center; background: #fff; border: 1px solid #eee; border-radius: 12px; padding: 12px 8px 10px; }
+  .pub .adm-table td { display: block; border: 0; padding: 0; width: auto !important; max-width: 100%; }
+  .pub .adm-table td::before { content: none; }
+  .pub .adm-table td:has(> .none) { display: none; }
+  .pub .adm-table td[data-label="번호"] { position: absolute; top: 8px; left: 10px; font-size: .72rem; color: var(--muted); }
+  .pub .adm-table td[data-label="사진"] { order: 1; }
+  .pub .adm-table td[data-label="막"] { order: 2; font-size: .72rem; color: var(--brand); }
+  .pub .adm-table td[data-label="소품명"] { order: 3; font-size: .92rem; word-break: keep-all; }
+  .pub .adm-table td[data-label="담당자"] { order: 4; font-size: .8rem; color: var(--muted); }
+  .pub .adm-table td[data-label="준비상태"] { order: 5; }
+  .pub .adm-table td[data-label="완료시간"] { order: 6; font-size: .72rem; color: var(--muted); }
+  .pub .adm-table .nm p { font-size: .72rem; }
 }
 
 /* 좁은 화면: 탭을 3개씩 줄바꿈해서 글자가 세로로 깨지지 않게 합니다. */
