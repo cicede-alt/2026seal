@@ -6,9 +6,11 @@ import { auth, db, configured, toEmail } from './data/firebase.js'
 import ScheduleAdmin from './ScheduleAdmin.jsx'
 import './admin.css'
 
+// 의상 스타일 (의상 탭의 이름 칸을 선택 상자로 대신합니다)
+export const costumeStyles = ['왕', '왕후', '총리', '귀족', '관리', '신하(남)', '신하(여)', '장로', '제사장', '일반(남)', '일반(여)']
 const kinds = [
   { id: 'props', label: '소품', title: '소품명', owner: '담당자', note: '사용 장면 / 메모' },
-  { id: 'costumes', label: '의상', title: '의상명', owner: '착용 배역', note: '메모 (색상·사이즈 등)' },
+  { id: 'costumes', label: '의상', title: '스타일', owner: '착용 배역', note: '메모 (색상·사이즈 등)', choices: costumeStyles },
   { id: 'situations', label: '상황', title: '상황 제목', owner: '등장 배역', note: '상황 설명' },
 ]
 // 막 탭: 1~4막 + 기타 + 전체(1~4막·기타 모두). '전체'는 보기 전용 필터이고 저장되는 값은 아닙니다.
@@ -265,7 +267,16 @@ function Panel() {
         <select value={formAct} onChange={(e) => setForm({ ...form, act: e.target.value === 'etc' ? 'etc' : Number(e.target.value) })} aria-label="막 선택">
           {actTabs.filter((a) => a.id !== 'all').map((a) => <option key={a.id} value={a.id}>{a.title}</option>)}
         </select>
-        <input placeholder={k.title} value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} />
+        {k.choices ? (
+          <select value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} aria-label={k.title}>
+            <option value="">{k.title} 선택</option>
+            {/* 예전에 직접 입력한 이름도 수정할 때 그대로 고를 수 있게 합니다 */}
+            {form.title && !k.choices.includes(form.title) && <option value={form.title}>{form.title}</option>}
+            {k.choices.map((c) => <option key={c} value={c}>{c}</option>)}
+          </select>
+        ) : (
+          <input placeholder={k.title} value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} />
+        )}
         <input placeholder={k.owner} value={form.owner} onChange={(e) => setForm({ ...form, owner: e.target.value })} />
         <textarea rows={2} placeholder={k.note} value={form.note} onChange={(e) => setForm({ ...form, note: e.target.value })} />
         <div className="adm-img">
