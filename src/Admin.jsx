@@ -259,7 +259,7 @@ function Panel() {
       <div className="adm-tabs sub">
         {actTabs.map((a) => (
           <button key={a.id} className={a.id === actId ? 'on' : ''} onClick={() => pick(setActId, a.id)}>
-            {a.title}<small>{count(a.id)}건</small>
+            {a.title}<small>{count(a.id, kind)}건</small>
           </button>
         ))}
       </div>
