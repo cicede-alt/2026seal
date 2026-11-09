@@ -160,7 +160,7 @@ export default function Props() {
       <div className="pub-meta">
         {items ? <p>전체 {total}개 중 {done}개 준비 완료</p> : <p />}
         <div className="pub-boards">
-          <span>소품 보드</span>
+          <span>보드</span>
           {boardActs.map((b) => <button key={b.id} onClick={() => setBoard(b.id)}>{b.title}</button>)}
         </div>
       </div>

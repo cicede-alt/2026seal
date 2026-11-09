@@ -128,3 +128,21 @@
 .board-scroll.zoom img { max-width: none; max-height: none; width: 220%; cursor: zoom-out; }
 .board-hint { margin: 0; padding: 8px 12px 14px; text-align: center; color: rgba(255,255,255,.65); font-size: .78rem; }
 @media (min-width: 900px) { .board-scroll.zoom img { width: 160%; } }
+
+/* 소품 개수 줄: 휴대폰에서도 한 줄로 */
+.pub-meta { flex-wrap: nowrap; }
+.pub-meta > p { white-space: nowrap; }
+.pub-boards { flex: none; gap: 4px; }
+.pub-boards button { padding: 5px 9px; font-size: .8rem; white-space: nowrap; }
+@media (max-width: 420px) {
+  .pub-meta { gap: 6px; }
+  .pub-meta > p { font-size: .72rem; }
+  .pub-boards { gap: 3px; }
+  .pub-boards span { font-size: .72rem; margin-right: 0; }
+  .pub-boards button { padding: 5px 7px; font-size: .76rem; }
+}
+@media (max-width: 340px) {
+  .pub-meta > p { font-size: .66rem; }
+  .pub-boards span { display: none; }
+  .pub-boards button { padding: 5px 6px; font-size: .72rem; }
+}
