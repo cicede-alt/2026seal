@@ -1,16 +1,18 @@
 import { useEffect, useState } from 'react'
-import { addDoc, collection, onSnapshot, query, where } from 'firebase/firestore'
+import { addDoc, collection, deleteDoc, doc, onSnapshot, query, updateDoc, where } from 'firebase/firestore'
 import { onAuthStateChanged, signOut } from 'firebase/auth'
 import { acts } from './data/script.js'
 import { auth, db, configured } from './data/firebase.js'
-import { statusOf, fmtTime, Lightbox, Login, shrink, actTabs, actLabel, forAct, inAct } from './Admin.jsx'
+import { statusOf, statuses, fmtTime, Lightbox, Login, shrink, actTabs, actLabel, forAct, inAct } from './Admin.jsx'
 import './admin.css'
 
-/** 소품 추가 입력칸 (로그인한 사람에게만 보입니다) */
-function AddForm({ actId, onMsg }) {
+/** 소품 추가·수정 입력칸 (로그인한 사람에게만 보입니다). item 이 있으면 수정, 없으면 추가 */
+function ItemForm({ actId, item, onMsg, onDone }) {
   const blank = { title: '', owner: '', note: '', image: '', imageBig: '' }
-  const [form, setForm] = useState(blank)
-  const [act, setAct] = useState(null)
+  const [form, setForm] = useState(() => (item
+    ? { title: item.title || '', owner: item.owner || '', note: item.note || '', image: item.image || '', imageBig: item.imageBig || '' }
+    : blank))
+  const [act, setAct] = useState(item ? item.act : null)
   const [busy, setBusy] = useState(false)
   const curAct = act ?? (actId === 'all' ? acts[0].id : actId)
 
@@ -31,11 +33,15 @@ function AddForm({ actId, onMsg }) {
     if (!form.title.trim() || busy) return
     setBusy(true); onMsg('저장 중…')
     try {
-      await addDoc(collection(db, 'items'), {
-        kind: 'props', act: curAct, title: form.title.trim(), owner: form.owner.trim(), note: form.note.trim(),
-        image: form.image, imageBig: form.imageBig, status: '준비전', doneAt: null, order: Date.now(),
-      })
-      setForm(blank); setAct(null); onMsg('저장됨')
+      const data = { act: curAct, title: form.title.trim(), owner: form.owner.trim(), note: form.note.trim(), image: form.image, imageBig: form.imageBig }
+      if (item) {
+        await updateDoc(doc(db, 'items', item.id), data)
+        onDone()
+      } else {
+        await addDoc(collection(db, 'items'), { ...data, kind: 'props', status: '준비전', doneAt: null, order: Date.now() })
+        setForm(blank); setAct(null)
+      }
+      onMsg('저장됨')
     } catch (x) { onMsg(`저장 실패: ${x.code || x.message}`) }
     setBusy(false)
   }
@@ -55,12 +61,15 @@ function AddForm({ actId, onMsg }) {
         {form.image ? <img src={form.image} alt="" /> : null}
         {form.image && <button type="button" onClick={() => setForm({ ...form, image: '', imageBig: '' })}>사진 삭제</button>}
       </div>
-      <div><button className="pri" type="submit" disabled={busy}>소품추가(저장)</button></div>
+      <div>
+        <button className="pri" type="submit" disabled={busy}>{item ? '수정 저장' : '소품추가(저장)'}</button>
+        {item && <button type="button" onClick={onDone}>취소</button>}
+      </div>
     </form>
   )
 }
 
-// /props : 누구나 볼 수 있는 읽기 전용 소품 목록입니다. (수정은 /admin)
+// /props : 누구나 볼 수 있는 소품 목록입니다. 로그인하면 추가·수정·삭제·상태 변경도 할 수 있습니다.
 export default function Props() {
   const [items, setItems] = useState(null)
   const [err, setErr] = useState('')
@@ -69,6 +78,7 @@ export default function Props() {
   const [user, setUser] = useState(null)
   const [msg, setMsg] = useState('')
   const [adding, setAdding] = useState(false)
+  const [editing, setEditing] = useState(null)
   const [loginOpen, setLoginOpen] = useState(false)
 
   useEffect(() => (configured ? onAuthStateChanged(auth, (u) => { setUser(u); if (u) setLoginOpen(false) }) : undefined), [])
@@ -81,6 +91,15 @@ export default function Props() {
       (e) => setErr(`불러오지 못했습니다. (${e.code})`),
     )
   }, [])
+
+  // 쓰기 결과는 상단에 표시합니다. (성공한 변경은 onSnapshot 으로 바로 목록에 반영됩니다.)
+  const run = (p) => {
+    setMsg('저장 중…')
+    return p.then(() => setMsg('저장됨')).catch((e) => setMsg(`저장 실패: ${e.code || e.message}`))
+  }
+  const setStatus = (i, st) => run(updateDoc(doc(db, 'items', i.id), { status: st, doneAt: st === '준비완료' ? Date.now() : null }))
+  const del = (i) => { if (confirm(`"${i.title}" 소품을 삭제할까요?`)) { if (editing?.id === i.id) setEditing(null); run(deleteDoc(doc(db, 'items', i.id))) } }
+  const edit = (i) => { setAdding(false); setEditing(i); window.scrollTo({ top: 0, behavior: 'smooth' }) }
 
   const all = actId === 'all'
   const list = forAct(items || [], actId)
@@ -96,7 +115,7 @@ export default function Props() {
       <div className="pub-add">
         {user ? (
           <>
-            <button className="pri" onClick={() => setAdding(!adding)}>{adding ? '추가 닫기' : '+ 소품 추가'}</button>
+            <button className="pri" onClick={() => { setEditing(null); setAdding(!adding) }}>{adding ? '추가 닫기' : '+ 소품 추가'}</button>
             <button onClick={() => signOut(auth)}>로그아웃</button>
           </>
         ) : (
@@ -105,7 +124,7 @@ export default function Props() {
         {msg && <span className="adm-status">{msg}</span>}
       </div>
       {!user && loginOpen && <Login inline />}
-      {user && adding && <AddForm actId={actId} onMsg={setMsg} />}
+      {user && (adding || editing) && <ItemForm key={editing ? editing.id : 'new'} actId={actId} item={editing} onMsg={setMsg} onDone={() => setEditing(null)} />}
       {items && <p className="adm-warn">전체 {total}개 중 {done}개 준비 완료</p>}
 
       <div className="adm-tabs">
@@ -123,7 +142,7 @@ export default function Props() {
           <div className="adm-scroll">
             <table className="adm-table">
               <thead>
-                <tr><th>번호</th>{all && <th>막</th>}<th>소품명</th><th>사진</th><th>담당자</th><th>준비상태</th><th>완료시간</th></tr>
+                <tr><th>번호</th>{all && <th>막</th>}<th>소품명</th><th>사진</th><th>담당자</th><th>준비상태</th><th>완료시간</th>{user && <th></th>}</tr>
               </thead>
               <tbody>
                 {list.map((i, idx) => {
@@ -135,8 +154,18 @@ export default function Props() {
                       <td data-label="소품명" className="nm"><b>{i.title}</b>{i.note && <p>{i.note}</p>}</td>
                       <td data-label="사진">{i.image ? <img className="thumb" src={i.image} alt="" onClick={() => setBig(i.imageBig || i.image)} /> : <div className="noimg">준비중</div>}</td>
                       <td data-label="담당자">{i.owner || <span className="none">-</span>}</td>
-                      <td data-label="준비상태"><span className={`badge-st st-${st}`}>{st}</span></td>
+                      <td data-label="준비상태">
+                        {user
+                          ? <select value={st} onChange={(e) => setStatus(i, e.target.value)}>{statuses.map((x) => <option key={x} value={x}>{x}</option>)}</select>
+                          : <span className={`badge-st st-${st}`}>{st}</span>}
+                      </td>
                       <td data-label="완료시간">{i.doneAt ? fmtTime(i.doneAt) : <span className="none">-</span>}</td>
+                      {user && (
+                        <td className="acts">
+                          <button onClick={() => edit(i)}>수정</button>
+                          <button onClick={() => del(i)}>삭제</button>
+                        </td>
+                      )}
                     </tr>
                   )
                 })}

@@ -97,3 +97,9 @@
 .pub-add button { padding: 8px 14px; border: 1px solid #ccc; background: #fff; border-radius: 8px; cursor: pointer; font-size: .9rem; }
 .pub-add button.pri { background: var(--brand); border-color: var(--brand); color: #fff; }
 .adm-inline { max-width: 360px; margin-bottom: 12px; }
+
+@media (max-width: 700px) {
+  .pub .adm-table td.acts { order: 7; display: flex; gap: 6px; justify-content: center; }
+  .pub .adm-table td.acts button { padding: 5px 12px; }
+  .pub .adm-table select { max-width: 100%; }
+}
