@@ -251,7 +251,7 @@ function Panel() {
       <div className="adm-tabs">
         {kinds.map((x) => (
           <button key={x.id} className={x.id === kind ? 'on' : ''} onClick={() => pick(setKind, x.id)}>
-            {x.label}<small>{count(actId, x.id)}</small>
+            {x.label}<small>{count('all', x.id)}</small>
           </button>
         ))}
       </div>
