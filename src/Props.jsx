@@ -6,6 +6,37 @@ import { auth, db, configured } from './data/firebase.js'
 import { statusOf, statuses, fmtTime, Lightbox, Login, shrink, actTabs, actLabel, forAct, inAct } from './Admin.jsx'
 import './admin.css'
 
+// 막별 소품 보드 이미지 (public/props/board-N.webp)
+const boardActs = acts.map((a) => ({ id: a.id, title: a.title, src: `/props/board-${a.id}.webp` }))
+
+/** 막별 소품 보드를 크게 보여주는 화면. 이미지를 누르면 확대/축소, 위쪽 버튼으로 다른 막 보드로 이동 */
+function BoardViewer({ actId, onClose, onPick }) {
+  const [zoom, setZoom] = useState(false)
+  const cur = boardActs.find((b) => b.id === actId)
+  useEffect(() => {
+    const on = (e) => { if (e.key === 'Escape') onClose() }
+    window.addEventListener('keydown', on)
+    return () => window.removeEventListener('keydown', on)
+  }, [onClose])
+  if (!cur) return null
+  return (
+    <div className="board-view" role="dialog" aria-label={`${cur.title} 소품 보드`}>
+      <div className="board-bar">
+        <div className="board-tabs">
+          {boardActs.map((b) => (
+            <button key={b.id} className={b.id === actId ? 'on' : ''} onClick={() => { setZoom(false); onPick(b.id) }}>{b.title}</button>
+          ))}
+        </div>
+        <button className="board-x" onClick={onClose} aria-label="닫기">✕</button>
+      </div>
+      <div className={`board-scroll${zoom ? ' zoom' : ''}`} onClick={(e) => { if (e.target === e.currentTarget) onClose() }}>
+        <img src={cur.src} alt={`${cur.title} 소품 보드`} onClick={() => setZoom(!zoom)} />
+      </div>
+      <p className="board-hint">{zoom ? '사진을 누르면 작게 보입니다 · 드래그해서 이동' : '사진을 누르면 크게 볼 수 있습니다'}</p>
+    </div>
+  )
+}
+
 /** 소품 추가·수정 입력칸 (로그인한 사람에게만 보입니다). item 이 있으면 수정, 없으면 추가 */
 function ItemForm({ actId, item, onMsg, onDone }) {
   const blank = { title: '', owner: '', note: '', image: '', imageBig: '' }
@@ -79,6 +110,7 @@ export default function Props() {
   const [msg, setMsg] = useState('')
   const [adding, setAdding] = useState(false)
   const [editing, setEditing] = useState(null)
+  const [board, setBoard] = useState(null)
   const [loginOpen, setLoginOpen] = useState(false)
 
   useEffect(() => (configured ? onAuthStateChanged(auth, (u) => { setUser(u); if (u) setLoginOpen(false) }) : undefined), [])
@@ -125,7 +157,13 @@ export default function Props() {
       </div>
       {!user && loginOpen && <Login inline />}
       {user && (adding || editing) && <ItemForm key={editing ? editing.id : 'new'} actId={actId} item={editing} onMsg={setMsg} onDone={() => setEditing(null)} />}
-      {items && <p className="adm-warn">전체 {total}개 중 {done}개 준비 완료</p>}
+      <div className="pub-meta">
+        {items ? <p>전체 {total}개 중 {done}개 준비 완료</p> : <p />}
+        <div className="pub-boards">
+          <span>소품 보드</span>
+          {boardActs.map((b) => <button key={b.id} onClick={() => setBoard(b.id)}>{b.title}</button>)}
+        </div>
+      </div>
 
       <div className="adm-tabs">
         {actTabs.map((a) => (
@@ -174,6 +212,7 @@ export default function Props() {
           </div>
         )}
       <Lightbox src={big} onClose={() => setBig('')} />
+      {board && <BoardViewer actId={board} onClose={() => setBoard(null)} onPick={setBoard} />}
     </div>
   )
 }

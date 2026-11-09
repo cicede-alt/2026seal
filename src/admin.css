@@ -107,3 +107,24 @@
 .adm-bulk { margin: 0 0 14px; }
 .adm-bulk > button { margin-bottom: 8px; }
 .adm-bulk .adm-form { margin-top: 0; }
+
+/* 소품 개수 줄 + 막별 소품 보드 버튼 */
+.pub-meta { display: flex; justify-content: space-between; align-items: center; gap: 8px 12px; flex-wrap: wrap; margin: 0 0 12px; }
+.pub-meta > p { margin: 0; font-size: .8rem; color: #999; }
+.pub-boards { display: flex; align-items: center; gap: 6px; margin-left: auto; }
+.pub-boards span { font-size: .78rem; color: var(--muted); margin-right: 2px; }
+.pub-boards button { padding: 6px 11px; border: 1px solid var(--brand); background: #fff; color: var(--brand); border-radius: 999px; font-size: .85rem; font-weight: 700; cursor: pointer; }
+.pub-boards button:hover { background: var(--brand); color: #fff; }
+
+.board-view { position: fixed; inset: 0; z-index: 60; background: rgba(20,12,6,.98); display: flex; flex-direction: column; }
+.board-bar { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 10px 12px; }
+.board-tabs { display: flex; gap: 6px; }
+.board-tabs button { padding: 7px 14px; border: 1px solid rgba(255,255,255,.35); background: transparent; color: #fff; border-radius: 999px; font-size: .9rem; cursor: pointer; }
+.board-tabs button.on { background: #fff; color: var(--brand); border-color: #fff; font-weight: 700; }
+.board-x { width: 38px; height: 38px; border: 0; border-radius: 50%; background: rgba(255,255,255,.9); font-size: 1.1rem; cursor: pointer; flex: none; }
+.board-scroll { flex: 1; min-height: 0; overflow: auto; display: grid; place-items: center; padding: 0 8px; -webkit-overflow-scrolling: touch; }
+.board-scroll img { max-width: 100%; max-height: 100%; border-radius: 10px; cursor: zoom-in; }
+.board-scroll.zoom { place-items: start; }
+.board-scroll.zoom img { max-width: none; max-height: none; width: 220%; cursor: zoom-out; }
+.board-hint { margin: 0; padding: 8px 12px 14px; text-align: center; color: rgba(255,255,255,.65); font-size: .78rem; }
+@media (min-width: 900px) { .board-scroll.zoom img { width: 160%; } }
