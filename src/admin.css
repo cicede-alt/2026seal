@@ -30,8 +30,11 @@
 .adm-table .none { color: #ccc; }
 .adm-table .thumb { width: 100px; height: 100px; object-fit: cover; border-radius: 8px; cursor: zoom-in; background: #f0e8dc; display: block; }
 .adm-table select { padding: 5px 8px; border: 1px solid #ccc; border-radius: 8px; background: #fff; font: inherit; font-size: .85rem; }
-.adm-table tr.st-완료 select { background: #e3f4e6; border-color: #9fd3a8; }
-.adm-table tr.st-준비\ 중 select { background: #fff3d6; border-color: #e8c76a; }
+/* 준비상태 색: 준비전(회색) 준비중(노랑) 구매전(주황) 배송중(파랑) 준비완료(초록) */
+.adm-table tr.st-준비중 select { background: #fff3d6; border-color: #e8c76a; }
+.adm-table tr.st-구매전 select { background: #ffe6d3; border-color: #eeb07c; }
+.adm-table tr.st-배송중 select { background: #dcecff; border-color: #8fb9ea; }
+.adm-table tr.st-준비완료 select { background: #e3f4e6; border-color: #9fd3a8; }
 .adm-table .acts { white-space: nowrap; text-align: right; }
 .adm-table .acts button { padding: 4px 8px; font-size: .75rem; margin-left: 3px; }
 .adm-scroll { overflow-x: auto; }
@@ -48,8 +51,10 @@
 
 .pub { padding-top: 28px; }
 .badge-st { display: inline-block; padding: 3px 10px; border-radius: 999px; font-size: .78rem; font-weight: 700; background: #eee; color: #777; white-space: nowrap; }
-.badge-st.st-준비\ 중 { background: #fff3d6; color: #8a6a00; }
-.badge-st.st-완료 { background: #e3f4e6; color: #256b33; }
+.badge-st.st-준비중 { background: #fff3d6; color: #8a6a00; }
+.badge-st.st-구매전 { background: #ffe6d3; color: #9a4a10; }
+.badge-st.st-배송중 { background: #dcecff; color: #1f5fa8; }
+.badge-st.st-준비완료 { background: #e3f4e6; color: #256b33; }
 
 .adm-big { position: fixed; inset: 0; z-index: 50; background: rgba(0,0,0,.78); display: grid; place-items: center; padding: 16px; cursor: zoom-out; }
 .adm-big img { max-width: min(92vw, 640px); max-height: 88vh; border-radius: 12px; background: #fff; box-shadow: 0 8px 32px rgba(0,0,0,.4); }

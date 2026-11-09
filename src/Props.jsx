@@ -24,7 +24,7 @@ export default function Props() {
   const all = actId === 'all'
   const list = forAct(items || [], actId)
   const total = (items || []).length
-  const done = (items || []).filter((i) => statusOf(i) === '완료').length
+  const done = (items || []).filter((i) => statusOf(i) === '준비완료').length
 
   return (
     <div className="adm pub">

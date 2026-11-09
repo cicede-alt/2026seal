@@ -21,9 +21,14 @@ export const forAct = (items, actId) => {
   const l = items.filter((i) => inAct(i, actId))
   return actId === 'all' ? l.sort((a, b) => actRank(a.act) - actRank(b.act)) : l
 }
-const statuses = ['준비 전', '준비 중', '완료']
+export const statuses = ['준비전', '준비중', '구매전', '배송중', '준비완료']
 // 예전 데이터(done 체크)도 상태로 읽어 줍니다.
-export const statusOf = (i) => i.status || (i.done ? '완료' : '준비 전')
+// 예전 값('준비 전' '준비 중' '완료')과 체크박스(done) 데이터도 새 상태로 읽어 줍니다.
+const legacy = { '준비 전': '준비전', '준비 중': '준비중', 완료: '준비완료' }
+export const statusOf = (i) => {
+  const v = i.status || (i.done ? '준비완료' : '준비전')
+  return legacy[v] || (statuses.includes(v) ? v : '준비전')
+}
 export const fmtTime = (ms) => {
   const d = new Date(ms)
   const p = (n) => String(n).padStart(2, '0')
@@ -178,12 +183,12 @@ function Panel() {
     if (!form.title.trim() || uploading) return
     const data = { act: formAct, title: form.title.trim(), owner: form.owner.trim(), note: form.note.trim(), image: form.image, imageBig: form.imageBig }
     if (editId) run(updateDoc(doc(db, 'items', editId), data))
-    else run(addDoc(collection(db, 'items'), { ...data, kind, status: '준비 전', doneAt: null, order: Date.now() }))
+    else run(addDoc(collection(db, 'items'), { ...data, kind, status: '준비전', doneAt: null, order: Date.now() }))
     reset()
   }
   const edit = (i) => { setEditId(i.id); setForm({ act: i.act, title: i.title, owner: i.owner || '', note: i.note || '', image: i.image || '', imageBig: i.imageBig || '' }) }
   const del = (i) => { if (confirm(`"${i.title}" 항목을 삭제할까요?`)) run(deleteDoc(doc(db, 'items', i.id))) }
-  const setStatus_ = (i, st) => run(updateDoc(doc(db, 'items', i.id), { status: st, doneAt: st === '완료' ? Date.now() : null }))
+  const setStatus_ = (i, st) => run(updateDoc(doc(db, 'items', i.id), { status: st, doneAt: st === '준비완료' ? Date.now() : null }))
   const move = (idx, d) => {
     const a = list[idx], b = list[idx + d]
     if (!b) return
