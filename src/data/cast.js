@@ -4,9 +4,9 @@ export const cast = [
     { role: '아하수에로 왕', en: 'Ahasuerus', name: '강전태' },
     { role: '하만', en: 'Haman', name: '최진식' },
     { role: '세레스', en: 'Zeresh', name: '이숙정' },
-    { role: '시녀 1', name: '박정윤' },
-    { role: '시녀 2', name: '정민경' },
-    { role: '시녀 3(아리아)', name: '김세화' },
+    { role: '시녀 1 (레나)', name: '박정윤' },
+    { role: '시녀 2 (다나)', name: '정민경' },
+    { role: '시녀 3 (아리아)', name: '김세화' },
     { role: '서기관장', name: '이한봉' },
   ] },
   { act: '2막', members: [

@@ -146,3 +146,65 @@
   .pub-boards span { display: none; }
   .pub-boards button { padding: 5px 6px; font-size: .72rem; }
 }
+
+/* 연습 시간 신청 (/practice) */
+.pr-help { margin: 8px 0 4px; font-size: .88rem; color: var(--muted); }
+.pr-form label { display: grid; gap: 4px; font-size: .8rem; color: var(--muted); }
+.pr-form .pr-times { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.pr-warn { margin: 0; font-size: .82rem; color: #c0392b; }
+.pr-days { display: grid; gap: 12px; margin-top: 8px; }
+.pr-day { background: #fff; border: 1px solid #eee; border-radius: 14px; padding: 12px 14px; }
+.pr-day h3 { margin: 0 0 6px; font-size: 1rem; color: var(--brand); }
+.pr-none { margin: 0; font-size: .85rem; color: var(--muted); }
+.pr-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
+.pr-list li { display: flex; align-items: center; gap: 10px; padding: 6px 0; border-bottom: 1px dashed #eee; }
+.pr-list li.lunch { color: #999; }
+.pr-time { min-width: 6.5em; font-weight: 700; color: var(--brand); }
+.pr-list li.lunch .pr-time { color: #999; }
+.pr-list button { margin-left: auto; padding: 2px 8px; border: 1px solid #ccc; background: #fff; border-radius: 6px; cursor: pointer; }
+
+/* 막·시간 버튼 선택 */
+.adm-form .pr-field { display: grid; gap: 6px; font-size: .8rem; color: var(--muted); }
+.adm-form .pr-btns { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+.adm-form .pr-btns.t { grid-template-columns: repeat(4, 1fr); }
+.pr-btns.t button { font-size: .82rem; padding: 8px 2px; line-height: 1.35; }
+.pr-btns button { padding: 10px 4px; border: 1px solid #ccc; background: #fff; border-radius: 8px; font-size: .95rem; cursor: pointer; color: #333; }
+.pr-btns button.on { background: var(--brand); border-color: var(--brand); color: #fff; font-weight: 700; }
+.pr-btns button:disabled { background: #e4e0d8; border-color: #e4e0d8; color: #9a9488; cursor: not-allowed; text-decoration: line-through; }
+.pr-btns button small { display: block; font-size: .68rem; text-decoration: none; margin-top: 1px; }
+
+/* 등장인물 이미지컷 (/characters) */
+.adm.chars { max-width: 960px; }
+.chars-box { margin-top: 12px; overflow: hidden; border: 1px solid #eee; border-radius: 12px; background: #fff; }
+.chars-doc { display: block; border: 0; transform-origin: 0 0; }
+.chars-open { text-align: right; margin: 8px 0 0; font-size: .85rem; }
+.chars-open a { color: var(--muted); }
+
+/* 경비 */
+.exp-form > * { min-width: 0; }
+.exp-form select, .exp-form > input { width: 100%; box-sizing: border-box; }
+.adm-table.exp-table:not(.cards) { min-width: 0; table-layout: fixed; }
+.exp-table th, .exp-table td { padding: 9px 2px; white-space: nowrap; }
+.exp-table th:nth-child(1), .exp-table td:nth-child(1) { width: 18px; text-align: center; }
+.exp-table th:nth-child(2), .exp-table td:nth-child(2) { width: 5.7em; }
+.exp-table th:nth-child(3), .exp-table td:nth-child(3) { width: 2.7em; }
+.exp-table th:nth-child(5), .exp-table td:nth-child(5) { width: 5.3em; text-align: right; }
+.exp-table th:nth-child(6), .exp-table td:nth-child(6) { width: 3.6em; }
+.exp-table td.nm { padding-left: 8px; padding-right: 6px; overflow: hidden; text-overflow: ellipsis; }
+.exp-table td.nm b { font-weight: 600; }
+.exp-table .acts button { padding: 2px 3px; margin: 0; border: 0; background: none; font-size: .85rem; }
+@media (max-width: 700px) {
+  .exp-form .adm-row { flex-wrap: wrap; }
+  .exp-form .adm-row input[type="date"] { flex: 1 1 140px; }
+  .exp-form .adm-row input[type="number"] { flex: 1 1 120px; }
+  .exp-form .adm-row .adm-radio { flex: 1 1 100%; order: -1; }
+  .exp-table { font-size: .8rem; }
+  .exp-table th { font-size: .7rem; }
+}
+
+.exp-table tfoot tr.sum td { border-top: 2px solid #e6dcc9; background: #f6f1e8; }
+.adm-table.exp-cat:not(.cards) { min-width: 0; margin-top: 18px; }
+.exp-cat td { padding: 8px 10px; }
+.exp-cat td:first-child { width: auto; color: inherit; }
+.exp-cat td:last-child { text-align: right; }
+.exp-cat tr.grp td { background: #f6f1e8; color: var(--brand); font-weight: 700; border-top: 2px solid #e6dcc9; }

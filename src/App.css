@@ -121,3 +121,35 @@ footer { margin-top: 0; padding: 28px; text-align: center; color: #999; font-siz
 .rs-cue-line { font-size: .72rem; }
 .rs-scene { font-size: 1rem; }
 .rs-chapter { font-size: 1.1rem; }
+
+/* 연습 시간 신청 버튼 / 카드 안 시간표 */
+.sec-btn { display: inline-block; padding: 7px 16px; background: var(--brand); color: #fff; border-radius: 999px; font-size: .85rem; font-weight: 700; text-decoration: none; }
+.slots { list-style: none; margin: 8px 0 0; padding: 0; display: grid; gap: 2px; font-size: .85rem; }
+.slots span { display: inline-block; min-width: 5.5em; color: var(--brand); font-weight: 700; }
+.slots .lunch { color: #999; }
+
+/* 카드 안 연습 시간표 */
+.slot-table { margin-top: 10px; border-collapse: collapse; table-layout: fixed; font-size: .82rem; width: 100%; }
+.slot-table th, .slot-table td { border: 1px solid #e6dccb; padding: 6px 8px; text-align: center; }
+.slot-table th { background: #f6f1e8; color: var(--brand); font-size: .78rem; }
+.slot-table th:first-child, .slot-table td:first-child { width: 8.5em; }
+.slot-table td:first-child { white-space: nowrap; font-weight: 700; color: var(--brand); }
+.slot-table .lunch td { background: #faf7f2; color: #999; font-weight: 400; }
+.slot-table .lunch td:first-child { color: #999; }
+.slot-table b.on { color: #fff; background: var(--brand); border-radius: 999px; padding: 2px 9px; font-size: .75rem; }
+
+.slot-table th, .slot-table b.on { white-space: nowrap; }
+@media (max-width: 600px) {
+  .slot-table { font-size: .68rem; }
+  .slot-table th, .slot-table td { padding: 5px 1px; }
+  .slot-table th { font-size: .68rem; }
+  .slot-table th:first-child, .slot-table td:first-child { width: 4.6em; white-space: normal; }
+  .slot-table b.on { padding: 2px 4px; font-size: .62rem; }
+}
+
+/* 지난 일정의 연습시간은 접어 둡니다 */
+.slot-fold > summary { cursor: pointer; font-size: .85rem; color: var(--muted, #8a7a66); padding: 6px 0; list-style: none; }
+.slot-fold > summary::-webkit-details-marker { display: none; }
+.slot-fold > summary::before { content: '▸ '; }
+.slot-fold[open] > summary::before { content: '▾ '; }
+.slot-fold[open] > summary { margin-bottom: 4px; }

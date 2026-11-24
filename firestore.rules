@@ -14,6 +14,20 @@ service cloud.firestore {
       allow read: if true;
       allow write: if request.auth != null;
     }
+    // 막별 연습 시간표: 누구나 읽고 신청(추가)할 수 있음. 수정·삭제는 로그인한 사용자만.
+    match /practice/{id} {
+      allow read: if true;
+      allow create: if request.resource.data.keys().hasOnly(['date', 'act', 'start', 'end', 'createdAt'])
+        && request.resource.data.act in ['1', '2', '3', '4']
+        && request.resource.data.date is string && request.resource.data.date.size() == 10
+        && request.resource.data.start is string && request.resource.data.start.size() == 5
+        && request.resource.data.end is string && request.resource.data.end.size() == 5;
+      allow update, delete: if request.auth != null;
+    }
+    // 경비: 로그인한 관리자만 읽기·쓰기.
+    match /expenses/{id} {
+      allow read, write: if request.auth != null;
+    }
     match /{document=**} {
       allow read, write: if false;
     }

@@ -1,10 +1,18 @@
-import { useEffect, useRef, useState } from 'react'
+import { Fragment, useEffect, useRef, useState } from 'react'
 import { event } from './data/event.js'
 import { schedule } from './data/schedule.js'
 import { acts } from './data/script.js'
 import { cast } from './data/cast.js'
 import { roles, act1 } from './data/act1test.js'
 import './App.css'
+import { usePractice } from './data/practice.js'
+
+const blocks = [
+  { start: '10:00', end: '12:00' },
+  { start: '13:00', end: '14:30' },
+  { start: '14:30', end: '16:00' },
+  { start: '16:00', end: '18:00' },
+]
 
 const menu = [
   { id: 'schedule', label: '일정' },
@@ -62,6 +70,7 @@ function useSchedule() {
 
 function Schedule() {
   const schedule = useSchedule()
+  const slots = usePractice()
   const today = getToday()
   const nextIdx = schedule.findIndex((s) => toDate(s.date) >= today)
   return (
@@ -83,6 +92,48 @@ function Schedule() {
               {badge && <em className="badge">{badge}</em>}
               <h3>{s.title}</h3>
               <p>{s.time} · {s.place}</p>
+              {(slots || []).some((x) => x.date === s.date) && (state === 'past' ? (
+                <details className="slot-fold">
+                  <summary>연습시간 보기</summary>
+                <table className="slot-table">
+                  <thead>
+                    <tr><th>연습시간</th>{acts.map((a) => <th key={a.id}>{a.title}</th>)}</tr>
+                  </thead>
+                  <tbody>
+                    {blocks.map((b) => (
+                      <Fragment key={b.start}>
+                        {b.start === '13:00' && <tr className="lunch"><td>12:00 ~ 13:00</td><td colSpan={acts.length}>점심시간</td></tr>}
+                        <tr>
+                          <td>{b.start} ~ {b.end}</td>
+                          {acts.map((a) => (
+                            <td key={a.id}>{slots.some((x) => x.date === s.date && String(x.act) === String(a.id) && x.start === b.start) ? <b className="on">신청</b> : ''}</td>
+                          ))}
+                        </tr>
+                      </Fragment>
+                    ))}
+                  </tbody>
+                </table>
+                </details>
+              ) : (
+                <table className="slot-table">
+                  <thead>
+                    <tr><th>연습시간</th>{acts.map((a) => <th key={a.id}>{a.title}</th>)}</tr>
+                  </thead>
+                  <tbody>
+                    {blocks.map((b) => (
+                      <Fragment key={b.start}>
+                        {b.start === '13:00' && <tr className="lunch"><td>12:00 ~ 13:00</td><td colSpan={acts.length}>점심시간</td></tr>}
+                        <tr>
+                          <td>{b.start} ~ {b.end}</td>
+                          {acts.map((a) => (
+                            <td key={a.id}>{slots.some((x) => x.date === s.date && String(x.act) === String(a.id) && x.start === b.start) ? <b className="on">신청</b> : ''}</td>
+                          ))}
+                        </tr>
+                      </Fragment>
+                    ))}
+                  </tbody>
+                </table>
+              ))}
             </div>
           </li>
         )
@@ -290,9 +341,9 @@ export default function App() {
       </div>
 
       <main>
-        <Section id="schedule" no="01" en="SCHEDULE" ko="연습 및 공연 일정" tone="cream" note="연습 일정은 상황에 따라 변경·추가될 수 있습니다. 변경되면 바로 알려드릴게요."><Schedule /></Section>
+        <Section id="schedule" no="01" en="SCHEDULE" ko="연습 및 공연 일정" tone="cream" note={<a className="sec-btn" href="/practice">연습 시간 신청</a>}><Schedule /></Section>
         <Section id="script" no="02" en="SCRIPT" ko="대본 (1~4막)" tone="sand"><Script /></Section>
-        <Section id="cast" no="03" en="CAST" ko="배역과 배우" tone="white" note="(직분생략)"><Cast /></Section>
+        <Section id="cast" no="03" en="CAST" ko="배역과 배우" tone="white" note={<><span>(직분생략)</span> <a className="sec-btn" href="/characters">이미지컷 보기</a></>}><Cast /></Section>
         {showTest && <Section id="test" no="04" en="TEST" ko="대본 배역 강조 (테스트 · 1막 v1.1)" tone="sand" note="내 배역을 고르면 해당 대사에 색이 칠해집니다. 테스트용 화면입니다."><RoleScript /></Section>}
       </main>
 

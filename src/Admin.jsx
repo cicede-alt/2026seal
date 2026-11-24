@@ -4,6 +4,7 @@ import { addDoc, collection, deleteDoc, doc, onSnapshot, updateDoc, writeBatch }
 import { acts } from './data/script.js'
 import { auth, db, configured, toEmail } from './data/firebase.js'
 import ScheduleAdmin from './ScheduleAdmin.jsx'
+import ExpenseAdmin from './ExpenseAdmin.jsx'
 import './admin.css'
 
 // 의상 스타일 (의상 탭의 이름 칸을 선택 상자로 대신합니다)
@@ -244,9 +245,10 @@ function Panel() {
       <div className="adm-tabs main">
         <button className={section === 'stage' ? 'on' : ''} onClick={() => setSection('stage')}>무대 준비 (소품·의상·상황)</button>
         <button className={section === 'schedule' ? 'on' : ''} onClick={() => setSection('schedule')}>일정 관리</button>
+        <button className={section === 'expense' ? 'on' : ''} onClick={() => setSection('expense')}>경비</button>
       </div>
 
-      {section === 'schedule' ? <ScheduleAdmin /> : (
+      {section === 'schedule' ? <ScheduleAdmin /> : section === 'expense' ? <ExpenseAdmin /> : (
       <>
       <div className="adm-tabs">
         {kinds.map((x) => (
